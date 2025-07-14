@@ -13,7 +13,7 @@
 
 <script>
 import getCollection from '../composables/getCollection'
-import { computed, onUpdated, ref } from 'vue'
+import { computed, onMounted, onUpdated, ref } from 'vue'
 import { formatDistanceToNow } from 'date-fns'
 
 export default {
@@ -23,7 +23,7 @@ export default {
     // format timestamp
     const formattedDocuments = computed(() => {
       if (documents.value) {
-        return documents.value.map(doc => {
+        return documents.value.map((doc) => {
           let time = formatDistanceToNow(doc.createdAt.toDate())
           return { ...doc, createdAt: time }
         })
@@ -36,8 +36,14 @@ export default {
       messages.value.scrollTop = messages.value.scrollHeight
     })
 
+    onMounted(() => {
+      if (Notification.permission !== 'granted') {
+        Notification.requestPermission()
+      }
+    })
+
     return { error, documents, formattedDocuments, messages }
-  }
+  },
 }
 </script>
 
